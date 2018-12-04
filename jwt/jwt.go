@@ -8,9 +8,10 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/context"
 	"time"
+
+	"github.com/teamlint/iris"
+	"github.com/teamlint/iris/context"
 )
 
 // iris provides some basic middleware, most for your learning courve.
@@ -87,6 +88,7 @@ func (m *Middleware) Get(ctx context.Context) *jwt.Token {
 // Serve the middleware's action
 func (m *Middleware) Serve(ctx context.Context) {
 	if err := m.CheckJWT(ctx); err != nil {
+		m.logf("jwt middleware err:%v", err)
 		ctx.StopExecution()
 		return
 	}
@@ -205,7 +207,7 @@ func (m *Middleware) CheckJWT(ctx context.Context) error {
 
 	if m.Config.Expiration {
 		if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok {
-			if expired := claims.VerifyExpiresAt(time.Now().Unix(), true); !expired {
+			if pass := claims.VerifyExpiresAt(time.Now().Unix(), true); !pass {
 				return fmt.Errorf("Token is expired")
 			}
 		}
