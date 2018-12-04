@@ -62,12 +62,23 @@ func main() {
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return key, nil
 		},
-		Expiration: false,
-		Debug:      true,
+		// Expiration: true,
+		Debug: false,
 		// When set, the middleware verifies that tokens are signed with the specific signing algorithm
 		// If the signing method is not constant the ValidationKeyGetter callback can be used to implement additional checks
 		// Important to avoid security issues described here: https://auth0.com/blog/2015/03/31/critical-vulnerabilities-in-json-web-token-libraries/
 		SigningMethod: jwt.SigningMethodHS256,
+		ErrorHandler: func(ctx iris.Context, msg string) {
+			data := struct {
+				Success bool
+				Msg     string
+			}{
+				Success: false,
+				Msg:     "错误处理:" + msg,
+			}
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.JSON(data)
+		},
 	})
 
 	// app.Use(jwtHandler.Serve)
@@ -77,7 +88,7 @@ func main() {
 		// you would like it to contain.
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"user_id": "1001",
-			// "exp":     time.Now().Add(time.Minute * 3).Unix(),
+			"exp":     time.Now().Add(time.Minute * 3).Unix(),
 		})
 
 		// Sign and get the complete encoded token as a string using the secret
