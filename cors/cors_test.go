@@ -4,14 +4,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/iris-contrib/middleware/cors"
+	"github.com/teamlint/middleware/cors"
 
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/httptest"
+	"github.com/teamlint/iris"
+	"github.com/teamlint/iris/httptest"
 )
 
 func TestCorsAllowOrigins(t *testing.T) {
-	origin := "https://iris-go.com"
+	origin := "*"
 	opts := cors.Options{
 		AllowedOrigins: []string{origin},
 		AllowedHeaders: []string{"Content-Type"},

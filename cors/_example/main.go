@@ -1,20 +1,29 @@
 package main
 
 import (
-	"github.com/kataras/iris"
+	"github.com/teamlint/iris"
 
-	"github.com/iris-contrib/middleware/cors"
+	"github.com/teamlint/middleware/cors"
 )
 
 func main() {
 	app := iris.New()
 
-	crs := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
+	opts := cors.Options{
+		AllowedOrigins: []string{"*"}, // allows everything, use that to change the hosts.
+		AllowedHeaders: []string{"*"},
+		// AllowedMethods:   []string{"GET", "POST", "PUT", "HEAD"},
 		AllowCredentials: true,
-	})
+		Debug:            true,
+	}
 
-	v1 := app.Party("/api/v1", crs).AllowMethods(iris.MethodOptions) // <- important for the preflight.
+	crs := cors.New(opts)
+	// app.Use(cors.AllowAll())
+	app.Use(crs)
+	app.AllowMethods(iris.MethodOptions)
+
+	// v1 := app.Party("/api/v1", crs).AllowMethods(iris.MethodOptions) // <- important for the preflight.
+	v1 := app.Party("/api/v1")
 	{
 		v1.Get("/home", func(ctx iris.Context) {
 			ctx.WriteString("Hello from /home")
@@ -33,5 +42,5 @@ func main() {
 		})
 	}
 
-	app.Run(iris.Addr("localhost:8080"))
+	app.Run(iris.Addr(":8082"))
 }

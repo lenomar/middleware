@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kataras/iris/context"
+	"github.com/teamlint/iris/context"
 )
 
 // Options is a configuration container to setup the CORS middleware.
